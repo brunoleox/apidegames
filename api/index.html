@@ -9,6 +9,11 @@
 </head>
 
 <body>
+    <h2>Login</h2>
+    <input type="text" name="email" id="email" placeholder="Email">
+    <input type="text" name="password" id="password" placeholder="Senha">
+    <button onclick="login()">Entrar</button>
+
     <hr>
     <h4>Lista de Games</h4>
     <ul id="games"></ul>
@@ -32,6 +37,28 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
 
+    function login() {
+        let emailField = document.getElementById("email")
+        let passField = document.getElementById("password")
+
+        let email = emailField.value
+        let password = passField.value
+
+        axios.post("http://localhost:3003/auth", { email, password })
+            .then(res => {
+                token = res.data.token
+                localStorage.setItem("token", token)
+            }).catch(err => {
+                alert("Login Inválido!")
+            })
+    }
+
+    let axiosConfig = {
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("token")
+        }
+    }
+
     function createGame() {
         let titleInput = document.getElementById("title")
         let yearInput = document.getElementById("year")
@@ -42,7 +69,9 @@
             year: yearInput.value,
             price: priceInput.value
         }
-        axios.post("http://localhost:3003/game", game).then(res => {
+
+        //Cria Games
+        axios.post("http://localhost:3003/game", game, axiosConfig).then(res => {
             if (res.status == 200) {
                 alert("Game Cadastrado")
             }
@@ -54,7 +83,9 @@
 
     function deleteGame(listItem) {
         let id = listItem.getAttribute("data-id")
-        axios.delete("http://localhost:3003/game/" + id).then(res => {
+
+        // Deleta Games
+        axios.delete("http://localhost:3003/game/" + id, axiosConfig).then(res => {
             alert("Game Deletado!")
         }).catch(err => {
             console.log(err)
@@ -79,7 +110,7 @@
         let priceInput = document.getElementById("priceEdit")
 
         let game = {
-            
+
             title: titleInput.value,
             year: yearInput.value,
             price: priceInput.value
@@ -87,7 +118,9 @@
 
         let id = idInput.value
 
-        axios.put("http://localhost:3003/game/"+ id, game).then(res => {
+
+        // Alteração de Games
+        axios.put("http://localhost:3003/game/" + id, game, axiosConfig).then(res => {
             if (res.status == 200) {
                 alert("Game Editado!")
             }
@@ -96,7 +129,11 @@
         })
     }
 
-    axios.get("http://localhost:3003/games").then(res => {
+
+
+
+    //Lista de Games
+    axios.get("http://localhost:3003/games", axiosConfig).then(res => {
         let games = res.data
         let list = document.getElementById("games")
 
