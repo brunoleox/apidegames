@@ -67,13 +67,19 @@ let DB = {
             name: "Guilherme",
             email: "guigg@gmail.com",
             password: "java123"
+        },
+        {
+            id: 2,
+            name: "Bruno",
+            email: "bruno@email.com",
+            password:"12345"
         }
     ]
 }
 
 app.get('/games', auth, (req, res) => {
     res.statusCode = 200
-    res.json({user:req.loggedUser, games: DB.games})
+    res.json(DB.games)
 })
 
 app.get('/games/:id', auth, (req, res) => {
